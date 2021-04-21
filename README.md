@@ -1,4 +1,32 @@
 
+以太坊测试私链搭建
+=================
+
+# 安装go环境
+wget https://dl.google.com/go/go1.11.6.linux-amd64.tar.gz
+(注意下载最新的go版本：1.15.6 不然go的版本不够新 会造成编译错误)
+tar xf go1.11.6.linux-amd64.tar.gz 
+
+vim /etc/profile
+export GOROOT=/opt/go
+export PATH=$PATH:$GOROOT/bin
+export GOPATH=/root/gosrc
+
+source /etc/profile
+go version
+
+# 编译geth
+
+git clone https://github.com/ethereum/go-ethereum.git
+mv go-ethereum ethereum
+cd ethereum
+make geth
+
+安装好后geth的命令路径在
+/opt/ethereum/build/bin
+cp geth /usr/bin/    拷贝到/usr/bin目录下就可以全局使用了
+
+
 # 添加data文件
 先在node_boot,node1,node2文件夹下添加空的data目录
 
@@ -6,7 +34,8 @@
 以下都是在node_boot文件夹下操作
 
 ## 1.创建创世账户
-先进入geth控制台： geth --datadir data --networkid 4   
+
+先进入geth控制台： geth --datadir data --networkid 4  console
 
 控制台下执行命令：personal.newAccount("密码")  
 结果： 
@@ -32,13 +61,15 @@ personal.unlockAccount(eth.accounts[0],"密码")
 
 查询创世账户余额  
 eth.getBalance("0xac9199717985cdac98e5832370b208b8a33a50ef")
+eth.getBalance(eth.accounts[0])
 
 
 # node1  节点1
 以下都是在node1文件夹下操作
 
 ## 1.创建挖矿账户
-- 先进入geth控制台： geth --datadir data --networkid 4    
+
+- 先进入geth控制台： geth --datadir data --networkid 4  console
 
 - 执行命令：personal.newAccount("密码")  
 
@@ -53,10 +84,12 @@ personal.listAccounts
     - 单位wei:  eth.getBalance("0x52B4b7e928223beACCd9523164134c86Af12ce20")  
     - 单位eth:   web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')  
 
+
 ## 2.初始化  
 - node1初始化  
 在node1 计算机上初始化节点1  
-geth --datadir data init genesis.json  
+
+geth --datadir data init genesis.json  console
 
 > 注意 genesis.json的内容必须和boot_node的完全相同    
 > 所有新节点启动前都要初始化
@@ -98,13 +131,15 @@ personal.listAccounts
 personal.unlockAccount(eth.accounts[0],"密码")
 
 - 开始挖矿  
-miner.start(3)
+miner.start()
 
 - 停止挖矿  
 miner.stop()
 
 - 使用以下命令，当新区块挖出后，挖矿即可结束   
-miner.start(1);admin.sleepBlocks(1);miner.stop();
+miner.start(1);
+admin.sleepBlocks(1);
+miner.stop();
 
 ## 转账
 - boot_node挖矿账户给node1挖矿账户转账  
@@ -128,7 +163,7 @@ geth启动时带上参数 --ws  --ws.addr  localhost --ws.port "8546"
 
 ## 日志重定向
 - 重定向到文件  
- geth console 2>>geth.log  
+geth console 2>>geth.log  
 
 - 不看日志  
 geth console 2>> /dev/null  
@@ -140,7 +175,7 @@ geth --verbosity 2 console
 
  ## 不挖矿的方式启动
  
- geth attach ipc:ipc文件路径   
+geth attach ipc:ipc文件路径   
 geth attach http://rpc地址:端口  
 geth attach ws://rpc地址:端口  
 

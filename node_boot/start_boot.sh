@@ -1,1 +1,1 @@
-geth --datadir data --networkid 4   --verbosity 2   console 
+geth --datadir data --networkid 444 --port "30306"  --verbosity 3 --snapshot=false  console
