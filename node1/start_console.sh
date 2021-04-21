@@ -1,5 +1,5 @@
 geth --datadir data \
-    --networkid 4 \
+    --networkid 66 \
     --port "30304" \
     --verbosity 3      \
     --http  \
@@ -7,6 +7,6 @@ geth --datadir data \
     --http.corsdomain="*"  \
     --ws   \
     --ws.port "8546" \
-    --bootnodes  "enode://28e98de783e26b970350935426fb6ee0ccead471a1f81737d55f521583e937485a46e3025774cfa68f2bab96ac0f6dcecde04b7a261afc793bdc4c303758ff91@115.230.117.172:30303"    \
+    --bootnodes "enode://11dd3d51f6628582aa6ad24f72341e6e0c9cd7f092a6e3b8193ed8b0937ccc9a6955ec93a592381482a21981c1f67d4109d6843565f0456d3978de1a42af1aa3@47.243.92.131:30303"   \
     --snapshot=false  \
     console

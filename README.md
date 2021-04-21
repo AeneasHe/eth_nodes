@@ -29,7 +29,7 @@ make geth
 /opt/ethereum/build/bin  
 
 ``` bash
-cp geth /usr/bin/    #拷贝到/usr/bin目录下就可以全局使用了
+cp build/bin/geth /usr/bin/    #拷贝到/usr/bin目录下就可以全局使用了
 ```
 
 
@@ -39,7 +39,7 @@ cp geth /usr/bin/    #拷贝到/usr/bin目录下就可以全局使用了
 ## 1.创建创世账户
 
 先进入geth控制台：  
-    geth --datadir data --networkid 444  console
+    geth --datadir data --networkid 66  console
 
 控制台下执行命令：  
     personal.newAccount("密码")  
@@ -70,8 +70,8 @@ geth --datadir data init genesis.json
 
 - 进入控制台  
 ``` bash
-geth --datadir data --networkid 444 console
-# --networkid 444 是私网的id，以太坊主网的id是1， 私网id不要和已有的网络id重复
+geth --datadir data --networkid 66 console
+# --networkid 66 是私网的id，以太坊主网的id是1， 私网id不要和已有的网络id重复
 ```
 
 - 解锁创世账户  
@@ -107,7 +107,7 @@ eth.blockNumber    # 当前区块高度
 ## 1.创建节点1的挖矿账户
 
 - 先进入geth控制台：  
-geth --datadir data --networkid 444  console
+geth --datadir data --networkid 66  --port "30304"  console
 
 - 执行命令：  
 personal.newAccount("密码")  
@@ -138,7 +138,7 @@ geth --datadir data init genesis.json  console
 ## 3.启动
 - node1启动
 > 如果node1和node_boot在同一台计算机上，要指定不同端口, geth默认端口是30303  
-> geth --datadir data --networkid 444 --port "30306"  console 
+> geth --datadir data --networkid 66 --port "30304"  console 
 
 ## 4.加入创世节点所在的网络
 
@@ -153,7 +153,7 @@ geth --datadir data init genesis.json  console
 admin.addPeer("enode://28e98de783e26b970350935426fb6ee0ccead471a1f81737d55f521583e937485a46e3025774cfa68f2bab96ac0f6dcecde04b7a261afc793bdc4c303758ff91@125.119.146.0:30303")
 
 > 除了上面的方法，也可以在启动节点的时候指定--bootnodes选项连接到其他节点。  
-> geth --datadir data --networkid 444 --port "30306"  --bootnodes  "enode://28e98de783e26b970350935426fb6ee0ccead471a1f81737d55f521583e937485a46e3025774cfa68f2bab96ac0f6dcecde04b7a261afc793bdc4c303758ff91@125.119.146.0:30303" console 
+> geth --datadir data --networkid 66 --port "30306"  --bootnodes  "enode://28e98de783e26b970350935426fb6ee0ccead471a1f81737d55f521583e937485a46e3025774cfa68f2bab96ac0f6dcecde04b7a261afc793bdc4c303758ff91@125.119.146.0:30303" console 
 > 注：新版好像无效，需要手动启动，待确认
 
 - 查看节点连接情况  
@@ -208,7 +208,7 @@ eth.sendTransaction({from:"0x4c53ed813d1001d61024d3a8fa27f352b0ff4e9", to: "0xa1
 - http rpc  
 geth启动时带上参数  --http --http.addr localhost --http.port "8545"   
 
-        geth --datadir data --networkid 444 --port "30306"  --bootnodes  "enode://28e98de783e26b970350935426fb6ee0ccead471a1f81737d55f521583e937485a46e3025774cfa68f2bab96ac0f6dcecde04b7a261afc793bdc4c303758ff91@125.119.146.0:30303"  --rpc --rpcaddr localhost --rpcport "8545"  console 
+        geth --datadir data --networkid 66 --port "30306"  --bootnodes  "enode://28e98de783e26b970350935426fb6ee0ccead471a1f81737d55f521583e937485a46e3025774cfa68f2bab96ac0f6dcecde04b7a261afc793bdc4c303758ff91@125.119.146.0:30303"  --rpc --rpcaddr localhost --rpcport "8545"  console 
 
 ## 启动ws rpc服务
 - ws rpc  
@@ -291,7 +291,10 @@ geth attach data/geth.ipc
 personal.unlockAccount(eth.accounts[0],"密码") 
 #开始挖矿
 miner.start()
+eth.syncing
 eth.mining 
 eth.blockNumber 
 ```
 
+
+enode://11dd3d51f6628582aa6ad24f72341e6e0c9cd7f092a6e3b8193ed8b0937ccc9a6955ec93a592381482a21981c1f67d4109d6843565f0456d3978de1a42af1aa3@47.243.92.131:30303

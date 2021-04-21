@@ -1,6 +1,6 @@
 nohup geth \
     --datadir data \
-    --networkid 4 \
+    --networkid 66 \
     --port "30304"  \
     --verbosity 3  \
     --http   
