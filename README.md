@@ -2,82 +2,99 @@
 以太坊测试私链搭建
 =================
 
-# 安装go环境
-wget https://dl.google.com/go/go1.11.6.linux-amd64.tar.gz
-(注意下载最新的go版本：1.15.6 不然go的版本不够新 会造成编译错误)
-tar xf go1.11.6.linux-amd64.tar.gz 
+# 一、安装go环境
 
+```bash
+wget https://dl.google.com/go/go1.11.6.linux-amd64.tar.gz 
+# (注意下载最新的go版本：1.15.6 不然go的版本不够新 会造成编译错误)
+tar xf go1.11.6.linux-amd64.tar.gz 
 vim /etc/profile
 export GOROOT=/opt/go
 export PATH=$PATH:$GOROOT/bin
 export GOPATH=/root/gosrc
-
 source /etc/profile
 go version
+```
 
-# 编译geth
+# 二、编译geth
 
+``` bash
 git clone https://github.com/ethereum/go-ethereum.git
 mv go-ethereum ethereum
 cd ethereum
 make geth
+```
 
-安装好后geth的命令路径在
-/opt/ethereum/build/bin
-cp geth /usr/bin/    拷贝到/usr/bin目录下就可以全局使用了
+安装好后geth的命令路径在  
+/opt/ethereum/build/bin  
+
+``` bash
+cp geth /usr/bin/    #拷贝到/usr/bin目录下就可以全局使用了
+```
 
 
-# 添加data文件
-先在node_boot,node1,node2文件夹下添加空的data目录
-
-# node_boot 创世节点
+# 三、node_boot 创世节点
 以下都是在node_boot文件夹下操作
 
 ## 1.创建创世账户
 
-先进入geth控制台： geth --datadir data --networkid 4  console
+先进入geth控制台：  
+    geth --datadir data --networkid 4  console
 
-控制台下执行命令：personal.newAccount("密码")  
-结果： 
-    地址：0xac9199717985cdac98e5832370b208b8a33a50ef  
-    保存：path=/home/aeneas/ethchain/data/keystore/UTC--2021-01-06T06-15-29.834332750Z--c853f0afbe7e53f4dec3dfbf9bcb071ebc45cc65
+控制台下执行命令：  
+    personal.newAccount("密码")  
 
-退出控制台：exit
+运行结果： 
+```
+    账户地址：0xac9199717985cdac98e5832370b208b8a33a50ef  
+    保存位置：path=/home/aeneas/ethchain/data/keystore/UTC--2021-01-06T06-15-29.834332750Z--c853f0afbe7e53f4dec3dfbf9bcb071ebc45cc65
+```
+退出控制台：  
+    exit
 
 ## 2.初始化生成创世块
-先修改genesis.json里的alloc地址为上面实际的创世地址  
 
+先修改genesis.json里的alloc地址为上面实际的创世地址  
+``` bash
 geth --datadir data init genesis.json  
+```
 
 ## 3.重新进入控制台
-进入控制台
-~~~ bash
+
+- 进入控制台  
+``` bash
 geth --datadir data --networkid 4 console
-~~~
+```
+
 > --networkid 4 是私网的id，以太坊主网的id是1， 私网id不要和已有的网络id重复
 
-解锁创世账户  
+- 解锁创世账户  
 personal.unlockAccount(eth.accounts[0],"密码") 
 
-查询创世账户余额  
+- 查询创世账户余额   
+```
 eth.getBalance("0xac9199717985cdac98e5832370b208b8a33a50ef")
 eth.getBalance(eth.accounts[0])
+```
 
-
-# node1  节点1
+# 四、node1  节点1
 以下都是在node1文件夹下操作
 
 ## 1.创建挖矿账户
 
-- 先进入geth控制台： geth --datadir data --networkid 4  console
+- 先进入geth控制台：  
+geth --datadir data --networkid 4  console
 
-- 执行命令：personal.newAccount("密码")  
+- 执行命令：  
+personal.newAccount("密码")  
 
-        结果：  
-        地址     address=0x52B4b7e928223beACCd9523164134c86Af12ce20  
-        保存      path=/home/aeneas/ethchain/data/keystore/UTC--2021-01-06T07-06-31.260427822Z--52b4b7e928223beaccd9523164134c86af12ce20
+结果：  
+```
+    地址     address=0x52B4b7e928223beACCd9523164134c86Af12ce20  
+    保存      path=/home/aeneas/ethchain/data/keystore/UTC--2021-01-06T07-06-31.260427822Z--52b4b7e928223beaccd9523164134c86af12ce20
+```
 
-- 查询当前节点的所有账户   
+- 查询当前节点的所有账户    
 personal.listAccounts
 
 - 查询第2个账户余额  
@@ -120,11 +137,11 @@ net.peerCount
 // 查看连接的节点信息  
 admin.peers  
 
-# node2  节点2  
+# 五、node2  节点2  
 在node2文件夹下操作，类似node1  
 
 
-# 节点的运行
+# 六、节点的运行
 ## 挖矿
 - 挖矿前要先解锁账户   
 personal.listAccounts  
@@ -179,7 +196,19 @@ geth attach ipc:ipc文件路径
 geth attach http://rpc地址:端口  
 geth attach ws://rpc地址:端口  
 
-# 常用命令
+# 七、常用命令
+
+net.peerCount   查看连接的节点数量，此处为1 如果连接比较多 就不是1了
+admin.peers 查看连接的管理节点
+
+eth.syncing    # 是否在同步
+eth.mining     # 是否在挖矿
+eth.blockNumber    # 当前区块高度
+
+miner.start()：开始挖矿   
+miner.stop()：停止挖矿   
+
+
 personal.newAccount()：创建账户  
 personal.unlockAccount()：解锁账户  
 eth.accounts：枚举系统中的账户  
