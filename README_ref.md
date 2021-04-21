@@ -214,7 +214,7 @@ eth.blockNumber
 eth.getBlock(6)
 通过交易hash（hash 值包含在上面交易返回值中）查看交易：
 
-eth.getTransaction("0x493e8aa2bcb6b2a362bdbd86b2c454279e14beea43b444aeb45c7f667bf572e2")
+eth.getTransaction("0x493e8aa2bcb6b2a362bdbd86b2c454279e14beea43b444aeb45c7f47bf572e2")
 4. 控制台操作命令介绍
 控制台内置了一些用来操作以太坊的 Javascript 对象，可以直接使用这些对象。这些对象主要包括：
 
@@ -275,7 +275,7 @@ admin.peers
     protocols: {
       eth: {
         difficulty: 131072,
-        head: "0x5e1fc79cb4ffa4739177b5408045cd5d51c6cf766133f23f7cd72ee1f8d790e0",
+        head: "0x5e1fc79cb4ffa4739177b5408045cd5d51c6cf74133f23f7cd72ee1f8d790e0",
         version: 63
       }
     }

@@ -1,4 +1,4 @@
-nohup geth --datadir data --networkid 66  \
+nohup geth --datadir data --networkid 4  \
     --port "30308" --verbosity 3    \
     --http   --http.port "8547"  --http.corsdomain="*"  \
     --ws    --ws.port "8548" \
