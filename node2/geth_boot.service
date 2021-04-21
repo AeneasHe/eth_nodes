@@ -1,0 +1,9 @@
+[Unit]
+Description=Ethereum go client
+
+[Service]
+Type=simple
+ExecStart=./start_nohup.sh
+
+[Install]
+WantedBy=default.target
