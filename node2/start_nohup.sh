@@ -3,11 +3,6 @@ geth \
 --networkid 66 \
 --port "30305" \
 --verbosity 3  \
---http   \
---http.port "8547"   \
---ws    \
---ws.port "8548"  \
---http.corsdomain="*"   \
---bootnodes  "enode://28e98de783e26b970350935426fb6ee0ccead471a1f81737d55f521583e937485a46e3025774cfa68f2bab96ac0f6dcecde04b7a261afc793bdc4c303758ff91@125.119.146.0:30303"  \
+--bootnodes  "enode://e1f355b8ab490cb09f60108a06ec17d2f4bb009b39bb69a78243cd0ba6298e864906428f13b8c108895a9af528628be4dc2d63bc955a971e848190e44079e7f3@47.243.92.131:30303"  \
 --snapshot=false  \
 console  

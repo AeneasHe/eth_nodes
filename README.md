@@ -88,7 +88,7 @@ geth --datadir data init genesis.json
 运行结果： 
 ```
     账户地址：0xac9199717985cdac98e5832370b208b8a33a50ef  
-    保存位置：path=/home/aeneas/ethchain/data/keystore/UTC--2021-01-06T06-15-29.834332750Z--c853f0afbe7e53f4dec3dfbf9bcb071ebc45cc65
+    保存位置：data/keystore/UTC--2021-01-06T06-15-29.834332750Z--c853f0afbe7e53f4dec3dfbf9bcb071ebc45cc65
 ```
 退出控制台：  
     exit
@@ -114,7 +114,9 @@ web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
 
 ## 4.挖矿
 
+- 命令
 ``` bash
+personal.unlockAccount(eth.accounts[0],"密码")  #先解锁账户
 miner.start()  #开始挖矿  
 eth.mining  #是否在挖矿
 eth.blockNumber # 区块高度
@@ -207,10 +209,29 @@ personal.listAccounts
 
 
 # 六、node2节点2
-在node2文件夹下操作，类似node1  
+在node2文件夹下操作，类似node1。node2作为专用的挖矿节点，node2挖矿启动以后，可以将boot_node挖矿停掉。  
 
+## 1.挖矿
+
+- 命令
+``` bash
+personal.unlockAccount(eth.accounts[0],"密码")  #先解锁账户
+miner.start()  #开始挖矿  
+eth.mining  #是否在挖矿
+eth.blockNumber # 区块高度
+miner.stop() #停止挖矿 
+```
+
+- 常用状态查询
+``` bash
+eth.syncing         # 是否在同步
+eth.mining          # 是否在挖矿
+eth.blockNumber    # 当前区块高度
+```
 
 # 七、节点的运行
+
+注意：以下的密码、address、enode、端口请替换成实际的数值  
 
 ## 挖矿
 - 挖矿前要先解锁账户   
@@ -220,7 +241,7 @@ personal.unlockAccount(eth.accounts[0],"密码")
 - 开始挖矿  
 miner.start()
 
-- 是否在挖矿
+- 是否在挖矿  
 eth.mining
 
 - 停止挖矿  
@@ -228,22 +249,24 @@ miner.stop()
 
 
 - 使用以下命令，当新区块挖出后，挖矿即可结束   
+```
 miner.start(1);
 admin.sleepBlocks(1);
 miner.stop();
+```
 
-- 挖矿难度
-genesis.json中的diffcult
-初始难度低一点，方便开始快速出块
-diffcult 0x2000
-后面难度调高，控制出块速度，以下值大概几分钟一个块
-diffcult 0xbffff4
+- 挖矿难度  
+
+    * diffcult 0x1  
+    genesis.json中的diffcult初始难度低一点，方便开始快速出块  
+    * diffcult 0xbffffff4  
+    后面难度调高，控制出块速度，以下值大概几分钟一个块,根据计算机性能数值不一样
 
 ## 转账
 - boot_node挖矿账户给node1挖矿账户转账  
 eth.sendTransaction({from:"0x4c53ed813d1001d61024d3a8fa27f352b0ff4e9", to: "0x52B4b7e928223beACCd9523164134c86Af12ce20", value: web3.toWei(1,"ether")}) 
 
-node1给主地址转账  
+- node1给主地址转账  
 eth.sendTransaction({from:"0x4c53ed813d1001d61024d3a8fa27f352b0ff4e9", to: "0xa16A181AD474C82D8753eB0C10e8DD4e5710314f", value: web3.toWei(10,"ether")}) 
 
 
@@ -272,13 +295,14 @@ geth --verbosity 2 console
 > 后面的值表示日志详细度:0=silent, 1=error, 2=warn, 3=info, 4=debug, 5=detail (默认为: 3):
 
  ## 不挖矿的方式启动
- 
+```bash
 geth attach ipc:ipc文件路径   
 geth attach http://rpc地址:端口  
 geth attach ws://rpc地址:端口  
+```
 
 # 八、常用命令
-
+```bash
 eth.syncing    # 是否在同步
 eth.mining     # 是否在挖矿
 eth.blockNumber    # 当前区块高度
@@ -293,9 +317,7 @@ miner.stop()：停止挖矿
 personal.newAccount()：创建账户  
 personal.unlockAccount()：解锁账户  
 eth.accounts：枚举系统中的账户  
-eth.getBalance()：查看账户余额  
-
->  返回值的单位是 Wei（Wei 是以太坊中最小货币面额单位，类似比特币中的聪，1 ether = 10^18 Wei）   
+eth.getBalance()：查看账户余额  #返回值的单位是 Wei（Wei 是以太坊中最小货币面额单位，类似比特币中的聪，1 ether = 10^18 Wei）   
 
 eth.blockNumber：列出区块总数   
 eth.getTransaction()：获取交易     
@@ -307,33 +329,37 @@ miner.stop()：停止挖矿
 web3.fromWei()：Wei 换算成以太币    
 web3.toWei()：以太币换算成 Wei  
 txpool.status：交易池中的状态  
-
+```
 # 九、快速启动脚本
 
-在各节点目录下
-- 控制台启动
+在各节点目录下，注意将--bootnodes参数替换成实际的enode参数
+
+- 控制台启动  
 start_console.sh
 
-- 后台启动
+- 后台启动  
 start_nohup.sh
 
-- 守护进程启动
-systemctl --user enable node_boot.service
-systemctl --user start node_boot.service
-
-systemctl --user enable node1.service
-systemctl --user start node1.service
-
-systemctl --user enable node2.service
-systemctl --user start node2.service
-
-- 后台启动或守护进程启动时，需要手动进入控制台开启节点挖矿
+- 守护进程启动  
 ```bash
-#  进入控制台
+# 安装服务
+systemctl --user enable node_boot.service
+systemctl --user enable node1.service
+systemctl --user enable node2.service
+
+# 启动服务
+systemctl --user start node_boot.service
+systemctl --user start node1.service
+systemctl --user start node2.service
+```
+- 后台启动或守护进程启动时，需要手动进入控制台开启节点挖矿
+
+```bash
+# 进入geth控制台
 geth attach data/geth.ipc 
-#解锁账户
+# 解锁账户
 personal.unlockAccount(eth.accounts[0],"密码") 
-#开始挖矿
+# 开始挖矿
 miner.start()
 eth.syncing
 eth.mining 
