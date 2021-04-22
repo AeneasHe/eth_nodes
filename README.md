@@ -2,8 +2,28 @@
 以太坊测试私链搭建
 =================
 
-# 一、安装go环境
+* [一、安装go环境](#一、安装go环境)
+* [二、编译geth](#二、编译geth)
+* [三、节点说明 ](#三、节点说明)
+* [四、node_boot 创世节点](#四、node_boot-创世节点)
+* [1.初始化生成创世块](#1初始化生成创世块)
+* [2.创建创世账户](#2创建创世账户)
+* [3.重新进入控制台](#3重新进入控制台)
+* [4.挖矿](#4挖矿)
+* [五、node1节点1](#五、node1节点1)
+* [1.初始化  ](#1初始化--)
+* [2.启动](#2启动)
+* [3.加入创世节点所在的网络](#3加入创世节点所在的网络)
+* [4.创建节点1的挖矿账户](#4创建节点1的挖矿账户)
+* [六、node2节点2  ](#六、node2节点2)
+* [七、节点的运行](#七、节点的运行)
+* [八、常用命令](#八、常用命令)
+* [九、快速启动脚本](#九、快速启动脚本)
 
+
+# 一、安装go环境  
+
+命令如下
 ```bash
 wget https://dl.google.com/go/go1.11.6.linux-amd64.tar.gz 
 # (注意下载最新的go版本：1.15.6 不然go的版本不够新 会造成编译错误)
@@ -18,6 +38,7 @@ go version
 
 # 二、编译geth
 
+命令如下
 ``` bash
 git clone https://github.com/ethereum/go-ethereum.git
 mv go-ethereum ethereum
@@ -32,11 +53,31 @@ make geth
 cp build/bin/geth /usr/bin/    #拷贝到/usr/bin目录下就可以全局使用了
 ```
 
+# 三、节点说明
 
-# 三、node_boot 创世节点
+node_boot 创世节点  
+node1 对外提供rpc服务的节点  
+node2 挖矿节点  
+
+# 四、node_boot 创世节点
 以下都是在node_boot文件夹下操作
 
-## 1.创建创世账户
+## 1.初始化生成创世块
+
+先修改genesis.json里的alloc地址为上面实际的创世地址  
+
+``` bash
+#初始化，注意所有节点第一次启动前都要初始化
+geth --datadir data init genesis.json  
+#如果出现错误提示，可以先删除原来的创世块
+geth removedb --datadir data 
+#再次初始化
+geth --datadir data init genesis.json   
+# 成功初始化的信息如下
+# INFO [04-21|17:09:32.784] Successfully wrote genesis state         database=lightchaindata hash=908673..a248c0
+```
+
+## 2.创建创世账户
 
 先进入geth控制台：  
     geth --datadir data --networkid 66  console
@@ -51,20 +92,6 @@ cp build/bin/geth /usr/bin/    #拷贝到/usr/bin目录下就可以全局使用�
 ```
 退出控制台：  
     exit
-
-## 2.初始化生成创世块
-
-先修改genesis.json里的alloc地址为上面实际的创世地址  
-``` bash
-#初始化，注意所有节点第一次启动前都要初始化
-geth --datadir data init genesis.json  
-#如果出现错误提示，可以先删除原来的创世块
-geth removedb --datadir data 
-#再次初始化
-geth --datadir data init genesis.json   
-# 成功初始化的信息如下
-# INFO [04-21|17:09:32.784] Successfully wrote genesis state         database=lightchaindata hash=908673..a248c0
-```
 
 ## 3.重新进入控制台
 
@@ -85,7 +112,7 @@ eth.getBalance(eth.accounts[0])
 web3.fromWei(eth.getBalance(eth.accounts[0]),'ether')
 ```
 
-- 挖矿
+## 4.挖矿
 
 ``` bash
 miner.start()  #开始挖矿  
@@ -101,46 +128,40 @@ eth.mining          # 是否在挖矿
 eth.blockNumber    # 当前区块高度
 ```
 
-# 四、node1  节点1
+# 五、node1节点1
 以下都是在node1文件夹下操作
 
-## 1.创建节点1的挖矿账户
-
-- 先进入geth控制台：  
-geth --datadir data --networkid 66  --port "30304"  console
-
-- 执行命令：  
-personal.newAccount("密码")  
-
-结果：  
-```
-    地址     address=0x52B4b7e928223beACCd9523164134c86Af12ce20  
-    保存      path=/home/aeneas/ethchain/data/keystore/UTC--2021-01-06T07-06-31.260427822Z--52b4b7e928223beaccd9523164134c86af12ce20
+注意：初始化用的genesis.json文件内容必需完全一样，如果boot_node难度调整过，不能用调整过difficulty的genesis.json进行节点初始化，
+必需用boot_node当初初始化一样的genesis.json
+``` bash
+geth --datadir data init genesis.json   # 必需使用boot_node初始化时一样的genesis.json
 ```
 
-- 查询当前节点的所有账户    
-personal.listAccounts
-
-- 查询第2个账户余额  
-    - 单位wei:  eth.getBalance("0x52B4b7e928223beACCd9523164134c86Af12ce20")  
-    - 单位eth:   web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')  
-
-
-## 2.初始化  
+## 1.初始化  
 - node1初始化  
 在node1 计算机上初始化节点1  
 
-geth --datadir data init genesis.json  console
+
+``` bash
+#初始化，注意所有节点第一次启动前都要初始化
+geth --datadir data init genesis.json  
+#如果出现错误提示，可以先删除原来的创世块
+geth removedb --datadir data 
+#再次初始化
+geth --datadir data init genesis.json   
+# 成功初始化的信息如下
+# INFO [04-21|17:09:32.784] Successfully wrote genesis state         database=lightchaindata hash=908673..a248c0
+```
 
 > 注意 genesis.json的内容必须和boot_node的完全相同    
 > 所有新节点启动前都要初始化
 
-## 3.启动
+## 2.启动
 - node1启动
 > 如果node1和node_boot在同一台计算机上，要指定不同端口, geth默认端口是30303  
 > geth --datadir data --networkid 66 --port "30304"  console 
 
-## 4.加入创世节点所在的网络
+## 3.加入创世节点所在的网络
 
 - 在node_boot里的geth控制台上查询创世节点的地址信息  
     admin.nodeInfo.enode
@@ -162,11 +183,34 @@ net.peerCount
 // 查看连接的节点信息  
 admin.peers  
 
-# 五、node2  节点2  
+
+## 4.创建节点1的挖矿账户
+
+- 先进入geth控制台：  
+geth --datadir data --networkid 66  --port "30304"  console
+
+- 执行命令：  
+personal.newAccount("密码")  
+
+结果：  
+```
+    地址     address=0x52B4b7e928223beACCd9523164134c86Af12ce20  
+    保存      path=/home/aeneas/ethchain/data/keystore/UTC--2021-01-06T07-06-31.260427822Z--52b4b7e928223beaccd9523164134c86af12ce20
+```
+
+- 查询当前节点的所有账户    
+personal.listAccounts
+
+- 查询第2个账户余额  
+    - 单位wei:  eth.getBalance("0x52B4b7e928223beACCd9523164134c86Af12ce20")  
+    - 单位eth:   web3.fromWei(eth.getBalance(eth.accounts[1]),'ether')  
+
+
+# 六、node2节点2
 在node2文件夹下操作，类似node1  
 
 
-# 六、节点的运行
+# 七、节点的运行
 
 ## 挖矿
 - 挖矿前要先解锁账户   
@@ -233,7 +277,7 @@ geth attach ipc:ipc文件路径
 geth attach http://rpc地址:端口  
 geth attach ws://rpc地址:端口  
 
-# 七、常用命令
+# 八、常用命令
 
 eth.syncing    # 是否在同步
 eth.mining     # 是否在挖矿
@@ -264,7 +308,7 @@ web3.fromWei()：Wei 换算成以太币
 web3.toWei()：以太币换算成 Wei  
 txpool.status：交易池中的状态  
 
-# 八、快速启动脚本
+# 九、快速启动脚本
 
 在各节点目录下
 - 控制台启动
@@ -295,6 +339,3 @@ eth.syncing
 eth.mining 
 eth.blockNumber 
 ```
-
-
-enode://11dd3d51f6628582aa6ad24f72341e6e0c9cd7f092a6e3b8193ed8b0937ccc9a6955ec93a592381482a21981c1f67d4109d6843565f0456d3978de1a42af1aa3@47.243.92.131:30303
